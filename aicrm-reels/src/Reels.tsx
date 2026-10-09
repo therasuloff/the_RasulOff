@@ -2,6 +2,7 @@ import { AbsoluteFill, Sequence, useCurrentFrame, interpolate } from "remotion";
 import { B, DAVOMIYLIK, SAHNALAR } from "./brend";
 import { shriftniYukla, SHRIFT } from "./shrift";
 import { Progress } from "./components/Progress";
+import { Ovoz } from "./Ovoz";
 
 import { Ilmoq } from "./scenes/01-Ilmoq";
 import { LogoSahna } from "./scenes/02-Logo";
@@ -65,6 +66,7 @@ export const Reels: React.FC = () => {
       ))}
 
       <Progress jami={DAVOMIYLIK} />
+      <Ovoz />
     </AbsoluteFill>
   );
 };

@@ -45,6 +45,37 @@ render to'xtamaydi.
 | 17-kompyuter-qizil-brend.png | Brend rangi | **kerak** |
 | 19-kompyuter-jadval.png | Jadval | **kerak** |
 
+## Ovoz
+
+Hamma effekt va musiqa shu yerda sintez qilinadi — tashqi fayl yuklanmaydi,
+shuning uchun mualliflik huquqi masalasi yo'q.
+
+```bash
+python3 skript/ovoz-yasash.py      # effektlar → public/ovoz/*.wav
+python3 skript/musiqa-yasash.py    # fon musiqasi → public/ovoz/musiqa.wav
+ffmpeg -i public/ovoz/musiqa.wav -c:a aac -b:a 160k public/ovoz/musiqa.m4a
+```
+
+Effektlar `src/Ovoz.tsx` dagi `EFFEKTLAR` ro'yxatida kadr bo'yicha
+joylashtirilgan — animatsiya bilan bir kadrda turadi. Vaqtini o'zgartirsangiz,
+sahnadagi animatsiya kadrini ham o'zgartiring.
+
+**Musiqa 120 BPM** (brifdagi 100–120 oralig'ida). Sahna chegaralari butun
+soniyalarda, 120 BPM da takt 2 soniya — shuning uchun almashuvlar zarbga
+aniq tushadi. BPM ni o'zgartirsangiz bu moslik buziladi.
+
+Sintez qilingan trek tirik yozilganining o'rnini bosmaydi — yaxshisi topilsa,
+`public/ovoz/musiqa.m4a` ni almashtiring, boshqa hech narsa o'zgarmaydi.
+
+### Diktor ovozi
+
+`public/ovoz/diktor.mp3` (yoki `.wav`/`.m4a`) qo'ying va `npm run ekranlar`
+ishga tushiring. Loyiha uni o'zi topadi va fon musiqasini 42% ga pasaytiradi.
+Matn `brif/BRIEF.md` ning 6-bo'limida.
+
+Ovoz kelgach sahnalar vaqtini unga moslash kerak bo'lishi mumkin — vaqtlar
+`src/brend.ts` dagi `SAHNALAR` da.
+
 ## Tuzilishi
 
 ```
@@ -73,7 +104,7 @@ Bosish va urg'ularni joylashtirish uchun `olcham.ts` dagi `nuqta()` va
 
 ## Hali qilinmagan
 
-- **Ovoz.** Brifdagi diktor matni (`BRIEF.md` 6-bo'lim) yozilmagan.
-  Audio fayl bo'lsa, `<Audio>` bilan qo'shiladi va sahnalar vaqti unga moslanadi.
-- **Musiqa.** 100–120 BPM yengil trek kerak; sahnalar almashuvi bitga moslanadi.
+- **Diktor ovozi.** Matn tayyor, yozilmagan — yuqoridagi "Diktor ovozi" ga qarang.
+- **Tirik musiqa.** Hozir sintez qilingan orinbosar turibdi.
 - **Aloqa.** `src/scenes/11-Yakun.tsx` dagi `ALOQA` o'zgaruvchisiga telefon/Telegram yoziladi.
+- **Skrinshotlar.** Yuqoridagi jadvalda "kerak" deb belgilanganlari.
