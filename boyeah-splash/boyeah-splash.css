@@ -1,0 +1,288 @@
+/* ==========================================================================
+   BooYeahShop — yuklanish (splash) ekrani
+   Brend: #FF6A13 (to'q sariq) · ilova aksenti: #F2E14C (sariq)
+   Bu fayl mustaqil: hech qanday shrift yoki rasm yuklamaydi.
+   ========================================================================== */
+
+/* splash turganda orqadagi sahifa aylanmaydi (JS qo'shadi/oladi) */
+html.bys-locked,
+html.bys-locked body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.bys-splash {
+  --bys-bg: #09090c;
+  --bys-bg-2: #12121a;
+  --bys-orange: #ff6a13;
+  --bys-orange-soft: #ff8a2b;
+  --bys-yellow: #f2e14c;
+  --bys-text: #f6f7fb;
+  --bys-muted: #8b8e9c;
+
+  /* vaqt o'qi (ms) — JS shu qiymatlarni o'qiydi */
+  --t-handle: 520ms;
+  --t-bag: 620ms;
+  --t-word: 540ms;
+
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  background: var(--bys-bg);
+  color: var(--bys-text);
+  overflow: hidden;
+  /* iOS/Telegram: xavfsiz zonalarni hurmat qilamiz */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+           env(safe-area-inset-bottom) env(safe-area-inset-left);
+  -webkit-font-smoothing: antialiased;
+  contain: strict;
+  will-change: opacity, transform;
+}
+
+/* --- fon: iliq radial nur + nozik "nafas" --- */
+.bys-splash::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: min(150vw, 150vh);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  background:
+    radial-gradient(circle at center,
+      rgba(255, 106, 19, 0.20) 0%,
+      rgba(255, 106, 19, 0.09) 28%,
+      rgba(255, 106, 19, 0.02) 48%,
+      transparent 68%);
+  opacity: 0;
+  animation: bys-glow-in 900ms cubic-bezier(.22,.8,.3,1) 60ms both,
+             bys-breathe 3.6s ease-in-out 900ms infinite;
+  pointer-events: none;
+}
+
+/* --- fon: juda nozik "grain", banding'ni yo'qotadi --- */
+.bys-splash::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 3px 3px;
+  opacity: 0.6;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+.bys-stage {
+  position: relative;
+  /* nur va "grain" qatlamlaridan yuqorida turadi */
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* logotip optik markazdan biroz tepada turadi */
+  translate: 0 -4vh;
+}
+
+/* ====================== BELGI (sumka + B) ====================== */
+
+.bys-mark {
+  width: clamp(92px, 26vw, 132px);
+  height: auto;
+  display: block;
+  overflow: visible;
+  filter: drop-shadow(0 10px 28px rgba(255, 106, 19, 0.28));
+}
+
+/* dasta: chiziq bo'ylab "chiziladi" */
+.bys-handle {
+  stroke-dasharray: var(--bys-handle-len, 60);
+  stroke-dashoffset: var(--bys-handle-len, 60);
+  animation: bys-draw var(--t-handle) cubic-bezier(.3,.9,.35,1) 140ms both;
+}
+
+/* sumka: pastdan ochiladi + yengil "spring" */
+.bys-bag {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  opacity: 0;
+  animation: bys-bag-in var(--t-bag) cubic-bezier(.2,1.25,.35,1) 440ms both;
+}
+
+/* yorug'lik yaltirashi logotip bo'ylab o'tadi */
+.bys-sheen {
+  opacity: 0;
+  animation: bys-sheen 760ms cubic-bezier(.4,0,.25,1) 900ms both;
+}
+
+/* ====================== SO'ZLAR (BooYeahShop) ====================== */
+
+.bys-word {
+  width: clamp(168px, 52vw, 248px);
+  height: auto;
+  display: block;
+  margin-top: clamp(18px, 4.4vw, 26px);
+  color: var(--bys-text); /* "BooYeah" — qorong'i fonda oq */
+  opacity: 0;
+  animation: bys-word-in var(--t-word) cubic-bezier(.22,.9,.3,1) 1020ms both;
+}
+
+/* "Shop" qismi bir oz keyin va yengil sakrab chiqadi */
+.bys-word-b {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  opacity: 0;
+  animation: bys-shop-in 460ms cubic-bezier(.2,1.3,.35,1) 1200ms both;
+}
+
+/* ====================== TAGLINE + YUKLAGICH ====================== */
+
+.bys-tagline {
+  margin-top: clamp(14px, 3.6vw, 20px);
+  font: 500 clamp(11px, 3.1vw, 13px) / 1.2 ui-sans-serif, -apple-system,
+        "Segoe UI", Roboto, system-ui, sans-serif;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--bys-muted);
+  opacity: 0;
+  animation: bys-fade-up 460ms ease-out 1420ms both;
+}
+
+.bys-progress {
+  position: relative;
+  margin-top: clamp(20px, 5vw, 30px);
+  width: clamp(104px, 30vw, 148px);
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.09);
+  overflow: hidden;
+  opacity: 0;
+  animation: bys-fade-up 460ms ease-out 1520ms both;
+}
+
+.bys-progress-bar {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 50%;
+  scale: var(--bys-p, 0) 1;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--bys-orange), var(--bys-yellow));
+  box-shadow: 0 0 12px rgba(255, 138, 43, 0.5);
+  transition: scale 280ms cubic-bezier(.3,.8,.35,1);
+}
+
+/* aniq foiz noma'lum bo'lsa — cheksiz "shuttle" rejimi */
+.bys-splash[data-indeterminate="true"] .bys-progress-bar {
+  scale: 0.38 1;
+  transition: none;
+  animation: bys-shuttle 1.15s cubic-bezier(.65,0,.35,1) infinite;
+}
+
+/* ====================== CHIQISH ====================== */
+
+.bys-splash[data-state="out"] {
+  animation: bys-splash-out 380ms cubic-bezier(.4,0,.2,1) both;
+  pointer-events: none;
+}
+
+.bys-splash[data-state="out"] .bys-stage {
+  animation: bys-stage-out 380ms cubic-bezier(.4,0,.2,1) both;
+}
+
+/* ====================== KEYFRAMES ====================== */
+
+@keyframes bys-glow-in {
+  from { opacity: 0; scale: 0.82; }
+  to   { opacity: 1; scale: 1; }
+}
+
+@keyframes bys-breathe {
+  0%, 100% { opacity: 1;    scale: 1; }
+  50%      { opacity: 0.74; scale: 1.06; }
+}
+
+@keyframes bys-draw {
+  from { stroke-dashoffset: var(--bys-handle-len, 60); }
+  to   { stroke-dashoffset: 0; }
+}
+
+@keyframes bys-bag-in {
+  from { opacity: 0; scale: 0.72; translate: 0 10%; }
+  60%  { opacity: 1; }
+  to   { opacity: 1; scale: 1; translate: 0 0; }
+}
+
+@keyframes bys-sheen {
+  from { opacity: 0; translate: 0 0; }
+  12%  { opacity: 1; }
+  88%  { opacity: 1; }
+  to   { opacity: 0; translate: 210px 0; }
+}
+
+@keyframes bys-word-in {
+  from { opacity: 0; translate: 0 10px; scale: 0.96; }
+  to   { opacity: 1; translate: 0 0; scale: 1; }
+}
+
+@keyframes bys-shop-in {
+  from { opacity: 0; scale: 0.6; translate: 0 4%; }
+  to   { opacity: 1; scale: 1; translate: 0 0; }
+}
+
+@keyframes bys-fade-up {
+  from { opacity: 0; translate: 0 6px; }
+  to   { opacity: 1; translate: 0 0; }
+}
+
+@keyframes bys-shuttle {
+  0%   { translate: -105% 0; }
+  100% { translate: 275% 0; }
+}
+
+@keyframes bys-splash-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes bys-stage-out {
+  from { opacity: 1; scale: 1;    translate: 0 -4vh; }
+  to   { opacity: 0; scale: 1.08; translate: 0 -5.2vh; }
+}
+
+/* ====================== MOSLASHUV ====================== */
+
+/* Telegram mavzusi och bo'lsa — fonni moslashtiramiz */
+.bys-splash[data-theme="light"] {
+  --bys-bg: #ffffff;
+  --bys-text: #1f2d3d;
+  --bys-muted: #7b8496;
+}
+.bys-splash[data-theme="light"]::after { opacity: 0.25; }
+
+/* harakatni kamaytirish so'ralgan bo'lsa — faqat yumshoq paydo bo'lish */
+@media (prefers-reduced-motion: reduce) {
+  .bys-splash::before { animation: bys-glow-in 300ms ease-out both; }
+  .bys-handle,
+  .bys-bag,
+  .bys-word,
+  .bys-word-b,
+  .bys-tagline,
+  .bys-progress {
+    animation: bys-fade-in 320ms ease-out both !important;
+    stroke-dashoffset: 0 !important;
+  }
+  .bys-sheen { display: none; }
+  .bys-splash[data-indeterminate="true"] .bys-progress-bar { animation: none; scale: 0.6 1; }
+  @keyframes bys-fade-in { from { opacity: 0; } to { opacity: 1; } }
+}
+
+/* juda past bo'yli ekranlar (gorizontal / kichik webview) */
+@media (max-height: 420px) {
+  .bys-stage { translate: 0 0; }
+  .bys-mark { width: clamp(64px, 16vh, 92px); }
+  .bys-tagline { display: none; }
+}

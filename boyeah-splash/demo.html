@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BooYeahShop splash — ko'rib chiqish</title>
+
+<link rel="stylesheet" href="./boyeah-splash.css">
+
+<style>
+  /* --- faqat shu ko'rib chiqish sahifasi uchun --- */
+  html, body { margin: 0; height: 100%; background: #09090c; }
+
+  .demo-app {
+    position: fixed; inset: 0; display: grid; place-items: center;
+    font: 500 15px/1.6 ui-sans-serif, -apple-system, "Segoe UI", Roboto, system-ui, sans-serif;
+    color: #8b8e9c; background: #0a0a0c; text-align: center; padding: 24px;
+  }
+
+  .demo-panel {
+    position: fixed; left: 50%; bottom: 18px; translate: -50% 0;
+    z-index: 2147483600;
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+    padding: 10px 12px; border-radius: 999px;
+    background: rgba(22, 22, 28, .92);
+    border: 1px solid rgba(255, 255, 255, .1);
+    backdrop-filter: blur(10px);
+    font: 500 13px ui-sans-serif, system-ui, sans-serif;
+  }
+  .demo-panel button {
+    appearance: none; border: 0; cursor: pointer; border-radius: 999px;
+    padding: 8px 14px; font: inherit; color: #0b0b0e;
+    background: linear-gradient(90deg, #ff6a13, #f2e14c);
+  }
+  .demo-panel button.ghost { background: rgba(255, 255, 255, .1); color: #e8e9ef; }
+</style>
+</head>
+<body>
+
+<div class="demo-app">
+  Ilova ekrani<br><small>(splash shu yerning ustida ko'rsatiladi)</small>
+</div>
+
+<!-- Bo'sh o'rin: markup splash.html dan yuklanadi (pastdagi skriptga qarang) -->
+<div class="bys-splash" data-indeterminate="true" role="status" aria-live="polite" aria-label="BooYeahShop yuklanmoqda"></div>
+
+<div class="demo-panel">
+  <button id="replay">Qaytadan ko'rsatish</button>
+  <button id="real" class="ghost">Haqiqiy yuklanish (3s)</button>
+  <button id="mute" class="ghost">Ovoz: yoniq</button>
+</div>
+
+<script>
+  /* Markupni splash.html dan olamiz — ikki nusxa saqlanmasin. */
+  var SNAPSHOT = null;
+  fetch('./splash.html')
+    .then(function (r) { return r.text(); })
+    .then(function (html) {
+      var tmp = document.createElement('div');
+      tmp.innerHTML = html;
+      var fresh = tmp.querySelector('.bys-splash');
+      if (!fresh) return;
+      SNAPSHOT = fresh.outerHTML;
+      var cur = document.querySelector('.bys-splash');
+      cur.parentNode.replaceChild(fresh, cur);
+      boot();
+    })
+    .catch(function () {
+      // file:// da fetch bloklangan bo'lsa — ogohlantiramiz
+      document.querySelector('.demo-app').innerHTML =
+        "Bu sahifani kichik server orqali oching:<br><code>npx http-server</code>";
+    });
+
+  function boot() {
+    var s = document.createElement('script');
+    s.src = './boyeah-splash.js';
+    s.onload = function () {
+      BooYeahSplash.mount({ safetyMs: 0 });
+      BooYeahSplash.indeterminate();
+      wire();
+    };
+    document.body.appendChild(s);
+  }
+
+  function wire() {
+    var muted = false;
+
+    function remount() {
+      var old = document.querySelector('.bys-splash');
+      if (old) old.remove();
+      document.querySelector('.demo-panel')
+        .insertAdjacentHTML('beforebegin', SNAPSHOT);
+      BooYeahSplash.mount({ muted: muted, safetyMs: 0 });
+    }
+
+    document.getElementById('replay').onclick = function () {
+      remount();
+      BooYeahSplash.indeterminate();
+    };
+
+    document.getElementById('real').onclick = function () {
+      remount();
+      var p = 0;
+      var id = setInterval(function () {
+        p += 0.06 + Math.random() * 0.07;
+        BooYeahSplash.setProgress(Math.min(p, 1));
+        if (p >= 1) { clearInterval(id); BooYeahSplash.hide(); }
+      }, 170);
+    };
+
+    document.getElementById('mute').onclick = function (e) {
+      muted = !muted;
+      e.target.textContent = 'Ovoz: ' + (muted ? "o'chiq" : 'yoniq');
+    };
+  }
+</script>
+</body>
+</html>
